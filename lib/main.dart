@@ -417,6 +417,7 @@ class _A extends State<AddForm> {
     'Full capacity (g)', 'Reorder below (g)', 'Supplier lead time (days)',
   ];
   final c = [for (final v in ['', '', '0', '25000', '2000', '2']) TextEditingController(text: v)];
+  String? err;
 
   @override
   Widget build(BuildContext context) {
@@ -439,12 +440,19 @@ class _A extends State<AddForm> {
                 ]),
             ]),
           ),
+        if (err != null)
+          Padding(padding: const EdgeInsets.only(top: 12), child: Text(err!, style: const TextStyle(color: coral))),
         const SizedBox(height: 16),
         SizedBox(
           width: double.infinity,
           child: FilledButton(
             onPressed: () {
-              widget.s.addItem([for (final x in c) x.text.trim()]);
+              final v = [for (final x in c) x.text.trim()];
+              if (v[0].isEmpty || v[1].isEmpty) {
+                setState(() => err = 'Enter an item name and a scale channel (for example esp32-01/ch1).');
+                return;
+              }
+              widget.s.addItem(v);
               Navigator.pop(context);
             },
             child: const Text('Add item'),
